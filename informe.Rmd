@@ -46,13 +46,16 @@ head(max_neduc_ocup_sexo_annio_n_instruc_limpio)
 #verificar tipo de datos data.frame
 class(max_neduc_ocup_sexo_annio_n_instruc_limpio)
 
-#ver cantidad de filas y columnas
+# nombres de las variables
+names(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+
+#tipo de dato de las variables
+str(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+
+#ver cantidad de filas (observaciones) y columnas (variables)
 nrow(max_neduc_ocup_sexo_annio_n_instruc_limpio)
 ncol(max_neduc_ocup_sexo_annio_n_instruc_limpio)
 
-
-# nombres de las variables
-names(max_neduc_ocup_sexo_annio_n_instruc_limpio)
 
 ```
 
