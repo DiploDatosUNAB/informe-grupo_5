@@ -1,6 +1,6 @@
 ---
-title: "titulo"
-author: "nombres"
+title: "Tp1_Grupo_5"
+author: "Liliana Inés González - Juan Shifres"
 output: html_document
 ---
 
@@ -13,20 +13,47 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introducción
 
+Los datos a utilizar en la elaboración del informe corresponde a Estadísticas sobre actividad, empleo, desocupación y subocupación de la población de la Ciudad de Buenos Aires -"Mercado laboral" el origen de la información se encuentra en el portal de Datos Abiertos de CABA "https://data.buenosaires.gob.ar/dataset/mercado-laboral"
+
+
+```{r}
+
+library(readr)
+
+```
 
 
 ## Exploración de los datos
 
+Población ocupada según nivel de educación
+Perfil educativo de la población adulta ocupada según el máximo nivel de enseñanza alcanzado
 
 ```{r}
-# Código para cargar o leer los datos
+
+## Lectura de los archivos
+
+max_neduc_ocup_sexo_annio_n_instruc_limpio <- read_csv("datos/max_neduc_ocup_sexo__annio__n_instruc_limpio.csv")
+head(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+
 ```
 
 
 
 ```{r}
-# Cödigo de R acá 
-# Agregá más bloques según sea necesario
+
+## Exploración de los datos
+
+#verificar tipo de datos data.frame
+class(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+
+#ver cantidad de filas y columnas
+nrow(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+ncol(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+
+
+# nombres de las variables
+names(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+
 ```
 
 
