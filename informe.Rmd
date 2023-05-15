@@ -28,7 +28,7 @@ library(readr)
 ## Exploración de los datos
 
 Población ocupada según máximo nivel educativo.
-Perfil educativo de la población adulta ocupada según el máximo nivel de enseñanza alcanzado
+Perfil educativo de la población adulta ocupada según el máximo nivel de enseñanza alcanzado por hombres y mujeres de la Ciudad de Buenos Aires, entre 2012 y 2019. 
 
 ```{r}
 
@@ -65,4 +65,5 @@ ncol(max_neduc_ocup_sexo_annio_n_instruc_limpio)
 
 ## Hipótesis
 
-
+¿se incrementó el nivel educativo de la población ocupada de la Ciudad de Buenos Aires entre los años 2012 y 2019?
+¿cómo se comporta de manera comparativa el nivel educativo, según el sexo de los ocupados, durante estos años?
