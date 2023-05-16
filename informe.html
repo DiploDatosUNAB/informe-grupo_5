@@ -380,7 +380,8 @@ nivel_educativo_sexo_anio &lt;- read_csv(&quot;datos/max_neduc_ocup_sexo__annio_
 ## dbl (2): anio, porc_poblacion
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>head(nivel_educativo_sexo_anio,10)</code></pre>
+<pre class="r"><code># mostramos las primeras 10 observaciones que nos permite considerar la distibución de hombres y mujeres y totales para las distintas categorias de nivel de instrucción que se han utilizado en el relevamiento
+head(nivel_educativo_sexo_anio,10)</code></pre>
 <pre><code>## # A tibble: 10 × 4
 ##     anio sexo  porc_poblacion nivel_instruccion    
 ##    &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                
@@ -419,15 +420,29 @@ str(nivel_educativo_sexo_anio)</code></pre>
 ##   .. )
 ##  - attr(*, &quot;problems&quot;)=&lt;externalptr&gt;</code></pre>
 <pre class="r"><code>#ver cantidad de filas (observaciones) y columnas (variables)
+
 nrow(nivel_educativo_sexo_anio)</code></pre>
 <pre><code>## [1] 144</code></pre>
 <pre class="r"><code>ncol(nivel_educativo_sexo_anio)</code></pre>
 <pre><code>## [1] 4</code></pre>
-<p>los datos no tiene valores nulos ni negativos, la cantidad decimales
-de la columna de “porc_poblacion” difieren según los años, en el 2012
-cuenta con 16 decimales y en el resto de los periodos tan solo cuenta
-con un decimal, se normalizó a 2 decimales creando la columna
-“porcentaje_poblacion”</p>
+<pre class="r"><code>#vericamos que no haya valores nulos en el data.frame
+
+any(is.na(nivel_educativo_sexo_anio$anio)) &amp;
+any(is.na(nivel_educativo_sexo_anio$sexo)) &amp;
+any(is.na(nivel_educativo_sexo_anio$nivel_instruccion)) &amp;
+any(is.na(nivel_educativo_sexo_anio$porc_poblacion))</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>#verificamos que todos los valores sean positivos en la columna porcentaje
+
+filter(nivel_educativo_sexo_anio,porc_poblacion&lt;0)</code></pre>
+<pre><code>## # A tibble: 0 × 4
+## # ℹ 4 variables: anio &lt;dbl&gt;, sexo &lt;chr&gt;, porc_poblacion &lt;dbl&gt;,
+## #   nivel_instruccion &lt;chr&gt;</code></pre>
+<p>Los datos observados no tiene valores nulos, ni negativos, la
+cantidad decimales de la columna de “porc_poblacion” difieren según los
+años, en el 2012 cuenta con 16 decimales y en el resto de los periodos
+tan solo cuenta con un decimal, se normalizó, para su mejor lectura, a 2
+decimales creando la columna “porcentaje_poblacion”</p>
 <pre class="r"><code>nivel_educativo_sexo_anio&lt;-nivel_educativo_sexo_anio %&gt;% 
   mutate(porcentaje_poblacion = round(porc_poblacion,2))</code></pre>
 <p>¿Cuál es su valor medio y desvío estándard? - ¿Cuál es su rango
@@ -491,7 +506,9 @@ diferencias?</p>
 <p>¿se incrementó el nivel educativo de la población ocupada de la
 Ciudad de Buenos Aires entre los años 2012 y 2019? ¿cómo se comporta de
 manera comparativa el nivel educativo, según el sexo de los ocupados,
-durante estos años?</p>
+durante estos años? ¿ se ha producido movilidad ascendente en el nivel
+educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo
+2012 y 2019 ?</p>
 </div>
 </div>
 
