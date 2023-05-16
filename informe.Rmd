@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # Cargar los paquetes necesarios acá
+library(readr)
+library(dplyr)
 ```
 
 
@@ -17,28 +19,19 @@ Los datos a utilizar en la elaboración del informe corresponde a Estadísticas 
 Se trata de datos tomados entre los años 2011 y 2019 y que fueran publicados durante el 2021. La fecha de su última actualización es mayor de 2021. 
 En este informe se procesarán datos correspondiente a la distribución de la población ocupada, según máximo nivel educativo alcanzado por hombres y mujeres. Datos tomados bimestralmente, entre el 2012 y 2019, inclusive.
 
-
-```{r}
-
-library(readr)
-
-```
-
-
-## Exploración de los datos
-
 Población ocupada según máximo nivel educativo.
 Perfil educativo de la población adulta ocupada según el máximo nivel de enseñanza alcanzado por hombres y mujeres de la Ciudad de Buenos Aires, entre 2012 y 2019. 
+
+
 
 ```{r}
 
 ## Lectura de los archivos
 
-max_neduc_ocup_sexo_annio_n_instruc_limpio <- read_csv("datos/max_neduc_ocup_sexo__annio__n_instruc_limpio.csv")
-head(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+nivel_educativo_sexo_anio <- read_csv("datos/max_neduc_ocup_sexo__annio__n_instruc_limpio.csv")
+head(nivel_educativo_sexo_anio,10)
 
 ```
-
 
 
 ```{r}
@@ -46,22 +39,65 @@ head(max_neduc_ocup_sexo_annio_n_instruc_limpio)
 ## Exploración de los datos
 
 #verificar tipo de datos data.frame
-class(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+class(nivel_educativo_sexo_anio)
 
 # nombres de las variables
-names(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+names(nivel_educativo_sexo_anio)
 
 #tipo de dato de las variables
-str(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+str(nivel_educativo_sexo_anio)
 
 #ver cantidad de filas (observaciones) y columnas (variables)
-nrow(max_neduc_ocup_sexo_annio_n_instruc_limpio)
-ncol(max_neduc_ocup_sexo_annio_n_instruc_limpio)
+nrow(nivel_educativo_sexo_anio)
+ncol(nivel_educativo_sexo_anio)
 
 
 ```
 
 
+los datos no tiene valores nulos ni negativos, la cantidad decimales de la columna de "porc_poblacion" difieren según los años, en el 2012 cuenta con 16 decimales y en el resto de los periodos tan solo cuenta con un decimal, se normalizó a 2 decimales creando la columna "porcentaje_poblacion"
+
+```{r}
+
+nivel_educativo_sexo_anio<-nivel_educativo_sexo_anio %>% 
+  mutate(porcentaje_poblacion = round(porc_poblacion,2))
+
+```
+
+
+
+¿Cuál es su valor medio y desvío estándard?
+-   ¿Cuál es su rango (valor máximo y valor mínimo)?
+-   ¿Hay alguna anomalía que sugiera que hay datos incorrectos? Valores imposibles (como valores negativos en una variable que sólo puede ser positiva) o poco creíbles.
+-   ¿Cuántas observaciones hay por cada grupo? ¿Cuántos valores faltantes? ¿Hay diferencias?
+
+
+#valor medio y Desvío estándard por: sexo y nivel de instrucción
+```{r}
+
+nivel_educativo_sexo_anio %>% 
+  filter(sexo=='m' |sexo=='v') %>%
+  group_by(sexo, nivel_instruccion) %>% 
+  summarise(porcentaje_poblacion_media = mean(porcentaje_poblacion),porcentaje_poblacion_sd = sd(porcentaje_poblacion))
+
+
+```
+# valor maximo y valor minimo
+
+```{r}
+
+nivel_educativo_sexo_anio %>% 
+  filter(sexo=='m' |sexo=='v') %>%
+  group_by(sexo, nivel_instruccion) %>% 
+  summarise(porcentaje_poblacion_max = max(porcentaje_poblacion,na.rm=TRUE),porcentaje_poblacion_min = min(porcentaje_poblacion,na.rm=TRUE), rango=max(porcentaje_poblacion,na.rm=TRUE)-min(porcentaje_poblacion,na.rm=TRUE))
+            
+
+```
+
+
+```{r}
+
+```
 
 ## Hipótesis
 
