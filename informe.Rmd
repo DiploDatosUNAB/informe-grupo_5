@@ -14,8 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Introducción
 
 Los datos a utilizar en la elaboración del informe corresponde a Estadísticas sobre actividad, empleo, desocupación y subocupación de la población de la Ciudad de Buenos Aires -"Mercado laboral" el origen de la información se encuentra en el portal de Datos Abiertos de CABA "https://data.buenosaires.gob.ar/dataset/mercado-laboral".
-Se trata de datos tomados entre los años 2011 y 2019 y que fueran publicados durante el 2021. La fecha de su última actualización es mayor de 2021. 
-En este informe se procesarán datos correspondiente a la distribución de la población ocupada, según máximo nivel educativo alcanzado por hombres y mujeres. Datos tomados bimestralmente, entre el 2012 y 2019, inclusive.
+Se trata de un conjunto de datos tomados entre los años 2011 y 2019 y que fueran publicados durante el 2021. La fecha de su última actualización es mayor de 2021. 
+En este informe se procesarán datos correspondiente a la distribución de la población ocupada, según máximo nivel educativo alcanzado por hombres y mujeres. Datos tomados entre el 2012 y 2019, inclusive.
 
 
 ```{r}
