@@ -10,6 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 # Cargar los paquetes necesarios acá
 library(readr)
 library(dplyr)
+library(ggplot2)
+library(tidyr)
 ```
 
 
@@ -30,11 +32,13 @@ Perfil educativo de la población adulta ocupada según el máximo nivel de ense
 
 nivel_educativo_sexo_anio <- read_csv("datos/max_neduc_ocup_sexo__annio__n_instruc_limpio.csv")
 
-
-# mostramos las primeras 10 observaciones que nos permite considerar la distibución de hombres y mujeres y totales para las distintas categorias de nivel de instrucción que se han utilizado en el relevamiento
-head(nivel_educativo_sexo_anio,10)
-
 ```
+
+mostramos las primeras 10 observaciones que nos permite considerar la distibución de hombres y mujeres y totales para las distintas categorias de nivel de instrucción que se han utilizado en el relevamiento
+```{r}
+head(nivel_educativo_sexo_anio,10)
+```
+
 
 
 ```{r}
@@ -75,7 +79,7 @@ filter(nivel_educativo_sexo_anio,porc_poblacion<0)
 
 ```
 
-Los datos observados no tiene valores nulos, ni negativos, la cantidad de decimales de la columna de "porc_poblacion" difieren según los año: en el 2012 cuenta con 16 decimales y en el resto de los periodos tan solo cuenta con un decimal. Se normalizó, para su mejor lectura, a 2 decimales creando la columna "porcentaje_poblacion"
+Los datos observados no tiene valores nulos, ni negativos, la cantidad de decimales de la columna de "porc_poblacion" difieren según los años: en el 2012 cuenta con 16 decimales y en el resto de los periodos tan solo cuenta con un decimal. Se normalizó, para su mejor lectura, a 2 decimales creando la columna "porcentaje_poblacion"
 
 ```{r}
 
@@ -87,8 +91,7 @@ nivel_educativo_sexo_anio<-nivel_educativo_sexo_anio %>%
 
 #valor medio y Desvío estándard por: sexo y nivel de instrucción
 ```{r}
-
-nivel_educativo_sexo_anio %>% 
+nivel_educativo_sexo_anio |> 
   filter(sexo=='m' |sexo=='v') %>%
   group_by(sexo, nivel_instruccion) %>% 
   summarise(porcentaje_poblacion_media = mean(porcentaje_poblacion),porcentaje_poblacion_sd = sd(porcentaje_poblacion))
@@ -112,12 +115,33 @@ nivel_educativo_sexo_anio %>%
 ```
 El rango entre valores máximos y mínimos de los porcentajes de ocupados según nivel educativo, nos vuelve a mostrar una dispersión de datos significativa entre los años 2012-2019 para el estrato de "nivel superior completo". 
 
-```{r}
 
-```
 
 ## Hipótesis
 
 ¿se incrementó el nivel educativo de la población ocupada de la Ciudad de Buenos Aires entre los años 2012 y 2019?
+```{r}
+nivel_educativo_sexo_anio|>
+  filter(sexo=="TOTAL")|>
+  ggplot(aes(anio,porc_poblacion))+
+  geom_line(aes(group=nivel_instruccion,color=nivel_instruccion))
+```
+
+
+
+
+
+
+
+
 ¿cómo se comporta de manera comparativa el nivel educativo, según el sexo de los ocupados, durante estos años?
+
+
+
+
+
 ¿ se ha producido movilidad ascendente en el nivel educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo 2012 y 2019 ?
+
+
+
+

@@ -382,8 +382,10 @@ nivel_educativo_sexo_anio &lt;- read_csv(&quot;datos/max_neduc_ocup_sexo__annio_
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code># mostramos las primeras 10 observaciones que nos permite considerar la distibución de hombres y mujeres y totales para las distintas categorias de nivel de instrucción que se han utilizado en el relevamiento
-head(nivel_educativo_sexo_anio,10)</code></pre>
+<p>mostramos las primeras 10 observaciones que nos permite considerar la
+distibución de hombres y mujeres y totales para las distintas categorias
+de nivel de instrucción que se han utilizado en el relevamiento</p>
+<pre class="r"><code>head(nivel_educativo_sexo_anio,10)</code></pre>
 <pre><code>## # A tibble: 10 × 4
 ##     anio sexo  porc_poblacion nivel_instruccion    
 ##    &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                
@@ -442,7 +444,7 @@ filter(nivel_educativo_sexo_anio,porc_poblacion&lt;0)</code></pre>
 ## #   nivel_instruccion &lt;chr&gt;</code></pre>
 <p>Los datos observados no tiene valores nulos, ni negativos, la
 cantidad de decimales de la columna de “porc_poblacion” difieren según
-los año: en el 2012 cuenta con 16 decimales y en el resto de los
+los años: en el 2012 cuenta con 16 decimales y en el resto de los
 periodos tan solo cuenta con un decimal. Se normalizó, para su mejor
 lectura, a 2 decimales creando la columna “porcentaje_poblacion”</p>
 <pre class="r"><code>nivel_educativo_sexo_anio&lt;-nivel_educativo_sexo_anio %&gt;% 
@@ -514,11 +516,11 @@ superior completo”.</p>
 <div id="hipótesis" class="section level2">
 <h2>Hipótesis</h2>
 <p>¿se incrementó el nivel educativo de la población ocupada de la
-Ciudad de Buenos Aires entre los años 2012 y 2019? ¿cómo se comporta de
-manera comparativa el nivel educativo, según el sexo de los ocupados,
-durante estos años? ¿ se ha producido movilidad ascendente en el nivel
-educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo
-2012 y 2019 ?</p>
+Ciudad de Buenos Aires entre los años 2012 y 2019?</p>
+<p>¿cómo se comporta de manera comparativa el nivel educativo, según el
+sexo de los ocupados, durante estos años? ¿ se ha producido movilidad
+ascendente en el nivel educativo de los ocupados de la Ciudad de Buenos
+Aires, en el periodo 2012 y 2019 ?</p>
 </div>
 </div>
 
