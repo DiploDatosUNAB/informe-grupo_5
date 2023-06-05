@@ -7,11 +7,13 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+ 
 # Cargar los paquetes necesarios acá
 library(readr)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+
 ```
 
 
@@ -118,29 +120,73 @@ El rango entre valores máximos y mínimos de los porcentajes de ocupados según
 
 
 ## Hipótesis
+#Hipótesis 1
+¿se incrementó el nivel educativo de la población ocupada de la Ciudad de Buenos Aires entre los años 2012 y 2019? ¿ se ha producido movilidad ascendente en el nivel educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo 2012 y 2019 ?
 
-¿se incrementó el nivel educativo de la población ocupada de la Ciudad de Buenos Aires entre los años 2012 y 2019?
+NOTA: SERÍA IMPORTANTE GENERAR LA FRECUENCIA ACUMULADA.
+
 ```{r}
 nivel_educativo_sexo_anio|>
   filter(sexo=="TOTAL")|>
   ggplot(aes(anio,porc_poblacion))+
-  geom_line(aes(group=nivel_instruccion,color=nivel_instruccion))
+  geom_line(aes(group=nivel_instruccion,color=nivel_instruccion))+
+   labs(title = "Proporción de ocupados segun nivel de instruccion, entre 2012 y 2019")
+```
+
+Según la gráfica, puede observarse que en el periodo 2012 al 2019 se incrementó significativamente el porcentaje de población ocupada con nivel de instrucción "superior completo". A la vez, en todos los niveles de instrucción menores, se observa un decrecimiento al comparar el inicio y el tramo final del mismo periodo de tiempo.Por lo que podemos estimar que en el lapso de tiempo considerado, los ocupados de la Ciudad de Buenos Aires se han movilizado hacia el nivel de instrucción superior. 
+
+
+#Hipótesis 2
+En el conjunto de ocupados, durante el periodo 2012 - 2019 hubo mayor porcentaje de mujeres en los niveles superiores de instruccion que en los niveles de instrucción menores, respecto de los varones ocupados.
+
+```{r}
+nivel_educativo_sexo_anio|>
+  filter(sexo == "m"|sexo == "v")|>
+  group_by(nivel_instruccion, sexo)|>
+    summarise(promedio_poblacion = mean(porc_poblacion))|>
+  ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
+  geom_col(position = "stack")+
+    labs(title = "Comparación de promedios de niveles de instruccion (2012-2019), por sexo de los ocupados")
+ 
+
 ```
 
 
+En la gráfica se observa que sólo en el nivel "superior completo" el porcentaje de mujeres ocupadas es mayor que el de varones. Para el resto de los niveles de instrucción, el porcentaje de varones es el mayor, con excepción del nivel "primario incompleto" en el que muestran igual participación. 
+
+COLOCAR PORCENTAJES COMO ETIQUETAS???!!!
+
+```{r}
+
+nivel_educativo_sexo_anio|>
+  filter(sexo == "m"|sexo == "v")|>
+  group_by(nivel_instruccion, sexo)|>
+    summarise(promedio_poblacion = mean(porc_poblacion))|>
+  ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
+  geom_col(position = "stack")+
+  geom_text(aes(label=promedio_poblacion),vjust=0.5)+
+  theme_void()+
+   labs(title = "Comparación de promedios de niveles de instruccion (2012-2019), por sexo de los ocupados")
+```
+
+  
+
+#Hipótesis 3
+¿cómo se comporta de manera comparativa el nivel educativo, según el sexo de los ocupados, durante estos años? 
 
 
 
 
 
 
-¿cómo se comporta de manera comparativa el nivel educativo, según el sexo de los ocupados, durante estos años?
 
 
 
 
 
-¿ se ha producido movilidad ascendente en el nivel educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo 2012 y 2019 ?
+
+
+
 
 
 
