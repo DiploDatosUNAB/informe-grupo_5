@@ -85,7 +85,7 @@ Los datos observados no tiene valores nulos, ni negativos, la cantidad de decima
 
 ```{r}
 
-nivel_educativo_sexo_anio<-nivel_educativo_sexo_anio %>% 
+nivel_educativo_sexo_anio<-nivel_educativo_sexo_anio |> 
   mutate(porcentaje_poblacion = round(porc_poblacion,2))
 
 ```
@@ -94,8 +94,8 @@ nivel_educativo_sexo_anio<-nivel_educativo_sexo_anio %>%
 #valor medio y Desvío estándard por: sexo y nivel de instrucción
 ```{r}
 nivel_educativo_sexo_anio |> 
-  filter(sexo=='m' |sexo=='v') %>%
-  group_by(sexo, nivel_instruccion) %>% 
+  filter(sexo=='m' |sexo=='v') |>
+  group_by(sexo, nivel_instruccion) |> 
   summarise(porcentaje_poblacion_media = mean(porcentaje_poblacion),porcentaje_poblacion_sd = sd(porcentaje_poblacion))
 
 
@@ -108,9 +108,9 @@ Llama la atención el valor de la desviación estándar para el nivel "superior 
 
 ```{r}
 
-nivel_educativo_sexo_anio %>% 
-  filter(sexo=='m' |sexo=='v') %>%
-  group_by(sexo, nivel_instruccion) %>% 
+nivel_educativo_sexo_anio |> 
+  filter(sexo=='m' |sexo=='v') |>
+  group_by(sexo, nivel_instruccion) |> 
   summarise(porcentaje_poblacion_max = max(porcentaje_poblacion,na.rm=TRUE),porcentaje_poblacion_min = min(porcentaje_poblacion,na.rm=TRUE), rango=max(porcentaje_poblacion,na.rm=TRUE)-min(porcentaje_poblacion,na.rm=TRUE))
             
 
