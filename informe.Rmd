@@ -123,14 +123,17 @@ El rango entre valores máximos y mínimos de los porcentajes de ocupados según
 #Hipótesis 1
 ¿se incrementó el nivel educativo de la población ocupada de la Ciudad de Buenos Aires entre los años 2012 y 2019? ¿ se ha producido movilidad ascendente en el nivel educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo 2012 y 2019 ?
 
-NOTA: SERÍA IMPORTANTE GENERAR LA FRECUENCIA ACUMULADA.
 
 ```{r}
+
 nivel_educativo_sexo_anio|>
   filter(sexo=="TOTAL")|>
   ggplot(aes(anio,porc_poblacion))+
-  geom_line(aes(group=nivel_instruccion,color=nivel_instruccion))+
-   labs(title = "Proporción de ocupados segun nivel de instruccion, entre 2012 y 2019")
+  geom_line(aes(group=nivel_instruccion,color=nivel_instruccion), size=2,alpha = 0.5)+
+   labs(title = "Proporción de ocupados segun nivel de instrucción, entre 2012 y 2019",
+        x = "Periodo", 
+        y = "% población ocupados")
+
 ```
 
 Según la gráfica, puede observarse que en el periodo 2012 al 2019 se incrementó significativamente el porcentaje de población ocupada con nivel de instrucción "superior completo". A la vez, en todos los niveles de instrucción menores, se observa un decrecimiento al comparar el inicio y el tramo final del mismo periodo de tiempo.Por lo que podemos estimar que en el lapso de tiempo considerado, los ocupados de la Ciudad de Buenos Aires se han movilizado hacia el nivel de instrucción superior. 
@@ -140,42 +143,75 @@ Según la gráfica, puede observarse que en el periodo 2012 al 2019 se increment
 En el conjunto de ocupados, durante el periodo 2012 - 2019 hubo mayor porcentaje de mujeres en los niveles superiores de instruccion que en los niveles de instrucción menores, respecto de los varones ocupados.
 
 ```{r}
-nivel_educativo_sexo_anio|>
-  filter(sexo == "m"|sexo == "v")|>
+  nivel_educativo_sexo_anio|>
+  filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
-    summarise(promedio_poblacion = mean(porc_poblacion))|>
+    summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
+  spread(sexo,promedio_poblacion) |> rename(Mujer=m,Varon=v) 
+
+```
+
+
+```{r}
+nivel_educativo_sexo_anio|>
+  filter(sexo != "TOTAL")|>
+  group_by(nivel_instruccion, sexo)|>
+    summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
   ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
   geom_col(position = "stack")+
-    labs(title = "Comparación de promedios de niveles de instruccion (2012-2019), por sexo de los ocupados")
- 
+  geom_text(aes(label = promedio_poblacion, group = factor(sexo)), position = position_stack(0.5))+
+    labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
 
 ```
 
 
 En la gráfica se observa que sólo en el nivel "superior completo" el porcentaje de mujeres ocupadas es mayor que el de varones. Para el resto de los niveles de instrucción, el porcentaje de varones es el mayor, con excepción del nivel "primario incompleto" en el que muestran igual participación. 
 
-COLOCAR PORCENTAJES COMO ETIQUETAS???!!!
-
 ```{r}
 
 nivel_educativo_sexo_anio|>
-  filter(sexo == "m"|sexo == "v")|>
+  filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
+<<<<<<< HEAD
     summarise(promedio_poblacion = mean(porc_poblacion))|>
   ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
   geom_col(position = "stack")+
   geom_text(aes(label=promedio_poblacion),vjust=1)+
   theme_void()+
    labs(title = "Comparación de promedios de niveles de instruccion (2012-2019), por sexo de los ocupados")
+=======
+  summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
+  ggplot(aes(sexo, promedio_poblacion))+
+  geom_col(aes(width = 0.5, fill = factor(nivel_instruccion)))+
+  geom_text(aes(label = promedio_poblacion, group = factor(nivel_instruccion)), position = position_stack(0.5))+
+  scale_fill_discrete(name = "Nivel de instrucción")+
+  labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", 
+       x = "Sexo", 
+       y="% población ocupados")
+
+>>>>>>> a7dd8a41699d4ee1d180de7c174a6756f795fa0e
 ```
 
-  
 
 #Hipótesis 3
 ¿cómo se comporta de manera comparativa el nivel educativo, según el sexo de los ocupados, durante estos años? 
 
 
 
+```{r}
+nivel_educativo_sexo_anio|>
+  filter(sexo != "TOTAL")|>
+  group_by(nivel_instruccion, sexo)|>
+  summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
+  ggplot() +  
+  geom_bar(aes(x = nivel_instruccion, y = promedio_poblacion, fill = sexo),
+           stat = 'identity', position = 'dodge')+
+  labs(title = "Comparativa niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+```
 
 
 
