@@ -174,6 +174,14 @@ En la gráfica se observa que sólo en el nivel "superior completo" el porcentaj
 nivel_educativo_sexo_anio|>
   filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
+<<<<<<< HEAD
+    summarise(promedio_poblacion = mean(porc_poblacion))|>
+  ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
+  geom_col(position = "stack")+
+  geom_text(aes(label=promedio_poblacion),vjust=1)+
+  theme_void()+
+   labs(title = "Comparación de promedios de niveles de instruccion (2012-2019), por sexo de los ocupados")
+=======
   summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
   ggplot(aes(sexo, promedio_poblacion))+
   geom_col(aes(width = 0.5, fill = factor(nivel_instruccion)))+
@@ -183,7 +191,12 @@ nivel_educativo_sexo_anio|>
        x = "Sexo", 
        y="% población ocupados")
 
+>>>>>>> a7dd8a41699d4ee1d180de7c174a6756f795fa0e
 ```
+
+
+
+
 
 
 #Hipótesis 3
@@ -199,7 +212,7 @@ nivel_educativo_sexo_anio|>
   ggplot() +  
   geom_bar(aes(x = nivel_instruccion, y = promedio_poblacion, fill = sexo),
            stat = 'identity', position = 'dodge')+
-  labs(title = "Comparativa niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
+  labs(title = "Niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 ```
@@ -207,12 +220,10 @@ nivel_educativo_sexo_anio|>
 
 
 
-
-
-
-
-
-
+```{r}
+archivos<-paste0("datos/",2012:2019, ".csv")
+datos<-list()
+```
 
 
 
