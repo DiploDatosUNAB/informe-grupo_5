@@ -164,7 +164,7 @@ nivel_educativo_sexo_anio|>
     summarise(promedio_poblacion = mean(porc_poblacion))|>
   ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
   geom_col(position = "stack")+
-  geom_text(aes(label=promedio_poblacion),vjust=0.5)+
+  geom_text(aes(label=promedio_poblacion),vjust=1)+
   theme_void()+
    labs(title = "Comparación de promedios de niveles de instruccion (2012-2019), por sexo de los ocupados")
 ```
