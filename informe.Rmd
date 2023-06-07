@@ -184,7 +184,7 @@ nivel_educativo_sexo_anio|>
        y="% población ocupados")
 
 ```
-
+Otra forma de visualizar que las mujeres ocupadas con nivel superior completo sólo tienen mayor participación que los varones en este agrupamiento de nivel de instrucción, mientras que los varones lo tienen en los demás grupos. 
 
 #Hipótesis 3
 ¿cómo se comporta de manera comparativa el nivel educativo, según el sexo de los ocupados, durante estos años? 
@@ -199,20 +199,64 @@ nivel_educativo_sexo_anio|>
   ggplot() +  
   geom_bar(aes(x = nivel_instruccion, y = promedio_poblacion, fill = sexo),
            stat = 'identity', position = 'dodge')+
-  labs(title = "Niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
+   labs(title = "Niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 ```
 
 
 
-
 ```{r}
-archivos<-paste0("datos/",2012:2019, ".csv")
-datos<-list()
+for(anio in 2012:2019) {
+ nivel_educativo_sexo_anio|>
+  filter(sexo=="TOTAL")|>
+  ggplot(aes(anio,porc_poblacion))+
+  geom_line(aes(group=nivel_instruccion,color=nivel_instruccion), linewidth=2,alpha = 0.5)+
+   labs(title = "Proporción de ocupados segun nivel de instrucción, entre 2012 y 2019",
+        x = "Periodo", 
+        y = "% población ocupados")
+}
 ```
 
 
 
 
+
+#Hipotesis 4
+
+¿cómo se comporta de manera comparativa la calificación ocupacional, según el sexo de los ocupados, durante estos años? 
+
+```{r}
+library(readr)
+calif_ocup_sexo_annio_calif_ocup_limpio <- read_csv("datos/calif_ocup_sexo__annio__calif_ocup_limpio.csv")
+```
+
+```{r}
+colnames(calif_ocup_sexo_annio_calif_ocup_limpio)
+```
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio|>
+    group_by(sexo,calificacion_ocupacional)|>
+  summarise(promedio_poblacion = mean(porc_calif_ocupacional),na.rm=TRUE)
+```
+
+
+
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio$porc_calif_ocupacional <- as.numeric(calif_ocup_sexo_annio_calif_ocup_limpio$porc_calif_ocupacional, na.rm=TRUE)
+```
+
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio|>
+    group_by(sexo,calificacion_ocupacional)|>
+  summarise(promedio_calificacion = round(mean(porc_calif_ocupacional), 2))|>
+  ggplot(aes(calificacion_ocupacional , promedio_calificacion , fill=sexo))+
+  geom_col(position = "stack")+
+  geom_text(aes(label = promedio_calificacion, group = factor(sexo)), position = position_stack(0.5))+
+    labs(title = "Promedios de nivel de calificación (2011-2019), por sexo de los ocupados", y="% promedio ocupados")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+
+En esta gráfica puede observarse que en los niveles profesional y técnico juntos, las mujeres ocupadas escasamente superan a los varones. Al relacionarse con la hipótesis 2 que mostraba que las mujeres de nivel de instrucción "superior completo" aventajaban por 11 puntos a los varones ocupados de ese grupo, podría pensarse que, pese al nivel de instrucción  superior que muestran las mujeres ocupadas, la inserción laboral en agrupamientos técnico-profesional no muestra la misma ventaja. 
 
