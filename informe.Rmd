@@ -147,7 +147,8 @@ En el conjunto de ocupados, durante el periodo 2012 - 2019 hubo mayor porcentaje
   filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
     summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
-  spread(sexo,promedio_poblacion) |> rename(Mujer=m,Varon=v) 
+  spread(sexo,promedio_poblacion) |> rename(Mujer=m,Varon=v)  |>
+arrange(factor(nivel_instruccion, levels=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')))
 
 ```
 
@@ -157,10 +158,10 @@ nivel_educativo_sexo_anio|>
   filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
     summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
-  ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
+  ggplot(aes(factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')) , promedio_poblacion , fill=sexo))+
   geom_col(position = "stack")+
   geom_text(aes(label = promedio_poblacion, group = factor(sexo)), position = position_stack(0.5))+
-    labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
+    labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 
@@ -176,8 +177,8 @@ nivel_educativo_sexo_anio|>
   group_by(nivel_instruccion, sexo)|>
   summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
   ggplot(aes(sexo, promedio_poblacion))+
-  geom_col(aes(width = 0.5, fill = factor(nivel_instruccion)))+
-  geom_text(aes(label = promedio_poblacion, group = factor(nivel_instruccion)), position = position_stack(0.5))+
+  geom_col(aes(width = 0.5, fill = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo'))))+
+  geom_text(aes(label = promedio_poblacion, group = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo'))), position = position_stack(0.5))+
   scale_fill_discrete(name = "Nivel de instrucción")+
   labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", 
        x = "Sexo", 
@@ -195,11 +196,10 @@ nivel_educativo_sexo_anio|>
   filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
   summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
-  arrange(factor(nivel_instruccion, levels=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')))|>
   ggplot() +  
-  geom_bar(aes(x = nivel_instruccion, y = promedio_poblacion, fill = sexo),
+  geom_bar(aes(x = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')), y = promedio_poblacion, fill = sexo),
            stat = 'identity', position = 'dodge')+
-   labs(title = "Niveles de instrucción (2012-2019), por sexo de los ocupados", y="% promedio ocupados")+
+   labs(title = "Niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 ```
