@@ -204,24 +204,21 @@ nivel_educativo_sexo_anio|>
 
 ```
 
-
-
-
-
-
-
-
-
-
 ```{r}
- nivel_educativo_sexo_anio|>
-  filter(sexo != "TOTAL", anio == 2012)|>
-  group_by(nivel_instruccion, sexo)
+
+  for(periodo in 2012:2019){
+    p<- nivel_educativo_sexo_anio|>
+      select(anio, sexo, nivel_instruccion, porcentaje_poblacion)|>
+      filter(sexo != "TOTAL" & anio==periodo)|>
+      group_by(nivel_instruccion, sexo) 
+    print(ggplot(p) +  
+    geom_bar(aes(x = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')), y = porcentaje_poblacion, fill = sexo),
+             stat = 'identity', position = 'dodge')+
+    labs(title = paste0("Niveles de instrucción año:", periodo, " por sexo de los ocupados"), x="Nivel Instrucción", y="% promedio ocupados")+
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)))
+  }
+
 ```
-
-
-
-
 
 
 #Hipotesis 4
@@ -229,7 +226,7 @@ nivel_educativo_sexo_anio|>
 ¿cómo se comporta de manera comparativa la calificación ocupacional, según el sexo de los ocupados, durante estos años? 
 
 ```{r}
-library(readr)
+
 calif_ocup_sexo_annio_calif_ocup_limpio <- read_csv("datos/calif_ocup_sexo__annio__calif_ocup_limpio.csv")
 ```
 
@@ -239,7 +236,7 @@ colnames(calif_ocup_sexo_annio_calif_ocup_limpio)
 ```{r}
 calif_ocup_sexo_annio_calif_ocup_limpio|>
     group_by(sexo,calificacion_ocupacional)|>
-  summarise(promedio_poblacion = mean(porc_calif_ocupacional),na.rm=TRUE)
+  summarise(promedio_poblacion = mean(porc_calif_ocupacional,na.rm=TRUE),na.rm=TRUE)
 ```
 
 
@@ -250,13 +247,15 @@ calif_ocup_sexo_annio_calif_ocup_limpio$porc_calif_ocupacional <- as.numeric(cal
 
 ```{r}
 calif_ocup_sexo_annio_calif_ocup_limpio|>
+    filter(calificacion_ocupacional != "No sabe/no contesta")|>
     group_by(sexo,calificacion_ocupacional)|>
-  summarise(promedio_calificacion = round(mean(porc_calif_ocupacional), 2), na.rm=TRUE)|>
-  ggplot(aes(calificacion_ocupacional , promedio_calificacion , fill=sexo))+
+  summarise(promedio_calificacion = round(mean(porc_calif_ocupacional,na.rm=TRUE), 2), na.rm=TRUE)|>
+  ggplot(aes(factor(calificacion_ocupacional, level=c('No calificado', 'Operativo', 'Técnico', 'Profesional')) , promedio_calificacion , fill=sexo))+
   geom_col(position = "stack")+
   geom_text(aes(label = promedio_calificacion, group = factor(sexo)), position = position_stack(0.5))+
-    labs(title = "Promedios de nivel de calificación (2011-2019), por sexo de los ocupados", y="% promedio ocupados")+
+    labs(title = "Promedios de nivel de calificación (2011-2019), por sexo de los ocupados", x="Calificación Ocupacional", y="% promedio ocupados")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
 ```
 
 
