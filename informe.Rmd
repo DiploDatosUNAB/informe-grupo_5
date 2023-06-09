@@ -203,6 +203,7 @@ nivel_educativo_sexo_anio|>
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 ```
+En la gráfica se observa, durante el periodo 2012-2019, una relación directa entre nivel de instrucción y porcentaje de ocupados de ambos sexos; esto es, a menor instrucción, menor porcentaje de ocupados, y viceversa. Sobresale, cómo ya venimos observando en las hipótesis anteriores, el grupo de ocupados que presenta el nivel de "instrucción superior" y, dentro de éste, el grupo de mujeres ocupadas. 
 
 ```{r}
 
@@ -219,7 +220,7 @@ nivel_educativo_sexo_anio|>
   }
 
 ```
-
+Al desglosar en cada ano de este periodo pudimos ver que, si bien hubieron algunas leves diferencias en un año en particular, cómo por ejemplo sucedió en 2012 cuando el grupo de mujeres ocupadas con nivel "superior incompleto" fue ligeramente superior al de los varones, en todos los años el comportamiento fue similar: para todos los grupos de nivel de instrucción, los varones presentaron mayor porcentaje de ocupación, excepto en el grupo de mujeres con nivel "superior completo".
 
 #Hipotesis 4
 
@@ -258,6 +259,6 @@ calif_ocup_sexo_annio_calif_ocup_limpio|>
 
 ```
 
-
-En esta gráfica puede observarse que en los niveles profesional y técnico juntos, las mujeres ocupadas escasamente superan a los varones. Al relacionarse con la hipótesis 2 que mostraba que las mujeres de nivel de instrucción "superior completo" aventajaban por 11 puntos a los varones ocupados de ese grupo, podría pensarse que, pese al nivel de instrucción  superior que muestran las mujeres ocupadas, la inserción laboral en agrupamientos técnico-profesional no muestra la misma ventaja. 
+Al relacionar las hipótesis 2 y 4, observamos que al comparar el porcentaje de ocupados de ambos sexos que tienen nivel de instrucción superior (incompleto y completo) con el porcentaje de ocupados en trabajos de calificación técnica y profesional juntos, el primer grupo es superior. Esto puede indicar que parte de estos ocupados se han insertado laboralmente en puestos que requieren menor calificación. Dicho de otra manera, parte de los ocupados se encuentran sobre calificados para sus trabajos. 
+Focalizando el análisis en las mujeres, en esta gráfica gráfica puede observarse que en los niveles profesional y técnico juntos, las mujeres ocupadas escasamente superan a los varones. Al relacionarse con la hipótesis 2 que mostraba que las mujeres de nivel de instrucción "superior completo" aventajaban por 11 puntos a los varones ocupados de ese grupo, podría pensarse que, pese al nivel de instrucción  superior que muestran las mujeres ocupadas, la inserción laboral en agrupamientos técnico-profesional no muestra la misma ventaja. 
 
