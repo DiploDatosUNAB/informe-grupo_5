@@ -2,9 +2,9 @@
 title: "Tp1_Grupo_5"
 author: "Liliana Inés González - Juan Shifres"
 output: 
-html_document:
-  code_folding:hide
-  toc:true
+  html_document:
+    code_folding: hide
+    toc: true
 
 editor_options: 
   markdown: 
@@ -90,6 +90,14 @@ filter(nivel_educativo_sexo_anio,porc_poblacion<0)
 
 ```
 
+
+```{r}
+#Categorizamos por nivel de instrucción la variable "nivel_instruccion"  
+
+nivel_educativo_sexo_anio <- nivel_educativo_sexo_anio |> mutate(nivel_instruccion=factor(nivel_instruccion, levels=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')))
+
+```
+
 Los datos observados no tiene valores nulos, ni negativos, la cantidad de decimales de la columna de "porc_poblacion" difieren según los años: en el 2012 cuenta con 16 decimales y en el resto de los periodos tan solo cuenta con un decimal.
 Se normalizó, para su mejor lectura, a 2 decimales creando la columna "porcentaje_poblacion"
 
@@ -166,7 +174,7 @@ En el conjunto de ocupados, durante el periodo 2012 - 2019 hubo mayor porcentaje
   group_by(nivel_instruccion, sexo)|>
     summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
   spread(sexo,promedio_poblacion) |> rename(Mujer=m,Varon=v)  |>
-arrange(factor(nivel_instruccion, levels=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')))|>
+arrange(nivel_instruccion)|>
   knitr:: kable()
 
 ```
@@ -176,7 +184,7 @@ nivel_educativo_sexo_anio|>
   filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
     summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
-  ggplot(aes(factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')) , promedio_poblacion , fill=sexo))+
+  ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
   geom_col(position = "stack")+
   geom_text(aes(label = promedio_poblacion, group = factor(sexo)), position = position_stack(0.5))+
     labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
@@ -195,7 +203,7 @@ nivel_educativo_sexo_anio|>
   group_by(nivel_instruccion, sexo)|>
   summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
   ggplot(aes(sexo, promedio_poblacion))+
-  geom_col(aes(width = 0.5, fill = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo'))))+
+  geom_col(aes(width = 0.5, fill = nivel_instruccion))+
   geom_text(aes(label = promedio_poblacion, group = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo'))), position = position_stack(0.5))+
   scale_fill_discrete(name = "Nivel de instrucción")+
   labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", 
@@ -215,7 +223,7 @@ nivel_educativo_sexo_anio|>
   group_by(nivel_instruccion, sexo)|>
   summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
   ggplot() +  
-  geom_bar(aes(x = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')), y = promedio_poblacion, fill = sexo),
+  geom_bar(aes(x = nivel_instruccion, y = promedio_poblacion, fill = sexo),
            stat = 'identity', position = 'dodge')+
    labs(title = "Niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
@@ -235,7 +243,7 @@ Como ya venimos observando en las hipótesis anteriores,sobresale el grupo de oc
       filter(sexo != "TOTAL" & anio==periodo)|>
       group_by(nivel_instruccion, sexo) 
     print(ggplot(p) +  
-    geom_bar(aes(x = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')), y = porcentaje_poblacion, fill = sexo),
+    geom_bar(aes(x = nivel_instruccion, y = porcentaje_poblacion, fill = sexo),
              stat = 'identity', position = 'dodge')+
     labs(title = paste0("Niveles de instrucción año:", periodo, " por sexo de los ocupados"), x="Nivel Instrucción", y="% promedio ocupados")+
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)))
