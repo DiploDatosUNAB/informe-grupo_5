@@ -1,28 +1,45 @@
 ---
 title: "Tp1_Grupo_5"
 author: "Liliana Inés González - Juan Shifres"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+ 
 # Cargar los paquetes necesarios acá
 library(readr)
 library(dplyr)
-```
+library(ggplot2)
+library(tidyr)
 
+```
 
 ## Introducción
 
-Los datos a utilizar en la elaboración del informe corresponde a Estadísticas sobre actividad, empleo, desocupación y subocupación de la población de la Ciudad de Buenos Aires -"Mercado laboral" el origen de la información se encuentra en el portal de Datos Abiertos de CABA "https://data.buenosaires.gob.ar/dataset/mercado-laboral".
-En este portal se encuentran un conjunto de datos tomados entre los años 2011 y 2019 y que fueran publicados durante el 2021. La fecha de su última actualización es mayo de 2021. 
-En este informe se procesarán datos correspondiente a la distribución de la población ocupada, según máximo nivel educativo alcanzado por hombres y mujeres. Datos tomados entre el 2012 y 2019, inclusive.
+Los datos a utilizar en la elaboración del informe corresponde a Estadísticas sobre actividad, empleo, desocupación y subocupación de la población de la Ciudad de Buenos Aires -"Mercado laboral" el origen de la información se encuentra en el portal de Datos Abiertos de CABA "<https://data.buenosaires.gob.ar/dataset/mercado-laboral>".
+En este portal se encuentran un conjunto de datos tomados entre los años 2011 y 2019 y que fueran publicados durante el 2021.
+La fecha de su última actualización es mayo de 2021.
+
+
+En este informe se procesarán datos correspondiente a la distribución de la población ocupada, según máximo nivel educativo alcanzado por hombres y mujeres.
+Datos tomados entre el 2012 y 2019, inclusive.
 
 Población ocupada según máximo nivel educativo.
-Perfil educativo de la población adulta ocupada según el máximo nivel de enseñanza alcanzado por hombres y mujeres de la Ciudad de Buenos Aires, entre 2012 y 2019. 
+Perfil educativo de la población adulta ocupada según el máximo nivel de enseñanza alcanzado por hombres y mujeres de la Ciudad de Buenos Aires, entre 2012 y 2019.
 
-
+## Lectura y análisis de los datos
 
 ```{r}
 
@@ -30,12 +47,13 @@ Perfil educativo de la población adulta ocupada según el máximo nivel de ense
 
 nivel_educativo_sexo_anio <- read_csv("datos/max_neduc_ocup_sexo__annio__n_instruc_limpio.csv")
 
-
-# mostramos las primeras 10 observaciones que nos permite considerar la distibución de hombres y mujeres y totales para las distintas categorias de nivel de instrucción que se han utilizado en el relevamiento
-head(nivel_educativo_sexo_anio,10)
-
 ```
 
+Mostramos las primeras 10 observaciones que nos permite considerar la distibución de hombres y mujeres y totales para las distintas categorias de nivel de instrucción que se han utilizado en el relevamiento.
+
+```{r}
+head(nivel_educativo_sexo_anio,10)
+```
 
 ```{r}
 
@@ -57,6 +75,7 @@ ncol(nivel_educativo_sexo_anio)
 
 
 ```
+
 ```{r}
 #verificamos que no haya valores nulos en el data.frame
 
@@ -75,49 +94,223 @@ filter(nivel_educativo_sexo_anio,porc_poblacion<0)
 
 ```
 
-Los datos observados no tiene valores nulos, ni negativos, la cantidad de decimales de la columna de "porc_poblacion" difieren según los año: en el 2012 cuenta con 16 decimales y en el resto de los periodos tan solo cuenta con un decimal. Se normalizó, para su mejor lectura, a 2 decimales creando la columna "porcentaje_poblacion"
 
 ```{r}
+#Categorizamos por nivel de instrucción la variable "nivel_instruccion"  
 
-nivel_educativo_sexo_anio<-nivel_educativo_sexo_anio %>% 
-  mutate(porcentaje_poblacion = round(porc_poblacion,2))
+nivel_educativo_sexo_anio <- nivel_educativo_sexo_anio |> mutate(nivel_instruccion=factor(nivel_instruccion, levels=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo')))
 
 ```
 
+Los datos observados no tiene valores nulos, ni negativos, la cantidad de decimales de la columna de "porc_poblacion" difieren según los años: en el 2012 cuenta con 16 decimales y en el resto de los periodos tan solo cuenta con un decimal.
 
-#valor medio y Desvío estándard por: sexo y nivel de instrucción
+### Valor medio y desvío estándar, por sexo y nivel de instrucción
+
 ```{r}
-
-nivel_educativo_sexo_anio %>% 
-  filter(sexo=='m' |sexo=='v') %>%
-  group_by(sexo, nivel_instruccion) %>% 
-  summarise(porcentaje_poblacion_media = mean(porcentaje_poblacion),porcentaje_poblacion_sd = sd(porcentaje_poblacion))
-
+nivel_educativo_sexo_anio |> 
+  filter(sexo!='TOTAL') |>
+  group_by(sexo, nivel_instruccion) |> 
+  summarise(porcentaje_poblacion_media = mean(porc_poblacion),porcentaje_poblacion_sd = sd(porc_poblacion))|>
+  knitr::kable()
 
 ```
-El cuadro anterior nos permite visualizar el porcentaje promedio de máximo nivel educativo alcanzado por hombres y mujeres ocupados en el periodo 2012-2019. Comparando entre sexos de los ocupados, Si bien se observa que, para ambos sexos, el grueso de la población ocupada registra estudios superiores, este indicador es mayor para el caso de las mujeres, mientras que los varones registran mayor porcentaje en el rango de estudios secundarios. 
-Llama la atención el valor de la desviación estándar para el nivel "superior completo", para ambos sexos, lo que nos indica que hay un alta dispersión de valores entre los registros de los años. 
+
+El cuadro anterior nos permite visualizar el porcentaje promedio de máximo nivel educativo alcanzado por hombres y mujeres ocupados en el periodo 2012-2019.
 
 
-# valor maximo y valor minimo
+Comparando entre sexos de los ocupados, si bien se observa que, para ambos sexos, el grueso de la población ocupada registra estudios superiores, este indicador es mayor para el caso de las mujeres, mientras que los varones registran mayor porcentaje en el rango de estudios secundarios.
+
+
+Llama la atención el valor de la desviación estándar para el nivel "superior completo", para ambos sexos, lo que nos indica que hay un alta dispersión de valores entre los registros de los años.
+
+### Valor máximo y valor mínimo
 
 ```{r}
 
-nivel_educativo_sexo_anio %>% 
-  filter(sexo=='m' |sexo=='v') %>%
-  group_by(sexo, nivel_instruccion) %>% 
-  summarise(porcentaje_poblacion_max = max(porcentaje_poblacion,na.rm=TRUE),porcentaje_poblacion_min = min(porcentaje_poblacion,na.rm=TRUE), rango=max(porcentaje_poblacion,na.rm=TRUE)-min(porcentaje_poblacion,na.rm=TRUE))
+nivel_educativo_sexo_anio |> 
+  filter(sexo!='TOTAL') |>
+  group_by(sexo, nivel_instruccion) |> 
+  summarise(porcentaje_poblacion_max = max(porc_poblacion,na.rm=TRUE),porcentaje_poblacion_min = min(porc_poblacion,na.rm=TRUE), rango=max(porc_poblacion,na.rm=TRUE)-min(porc_poblacion,na.rm=TRUE))|>
+  knitr:: kable()
             
 
 ```
-El rango entre valores máximos y mínimos de los porcentajes de ocupados según nivel educativo, nos vuelve a mostrar una dispersión de datos significativa entre los años 2012-2019 para el estrato de "nivel superior completo". 
 
-```{r}
-
-```
+El rango entre valores máximos y mínimos de los porcentajes de ocupados según nivel educativo, nos vuelve a mostrar una dispersión de datos significativa entre los años 2012-2019 para el estrato de "nivel superior completo".
 
 ## Hipótesis
 
+### Hipótesis 1 
 ¿se incrementó el nivel educativo de la población ocupada de la Ciudad de Buenos Aires entre los años 2012 y 2019?
+¿se ha producido movilidad ascendente en el nivel educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo 2012 y 2019 ?
+
+```{r}
+
+nivel_educativo_sexo_anio|>
+  filter(sexo=="TOTAL")|>
+  ggplot(aes(anio,porc_poblacion))+
+  geom_line(aes(group=nivel_instruccion,color=nivel_instruccion), size=2,alpha = 0.5)+
+   labs(title = "Proporción de ocupados segun nivel de instrucción, entre 2012 y 2019",
+        x = "Periodo", 
+        y = "% población ocupados")
+
+```
+
+Según la gráfica, puede observarse que en el periodo 2012 al 2019 se incrementó significativamente el porcentaje de población ocupada con nivel de instrucción "superior completo".
+
+
+A la vez, en todos los niveles de instrucción menores, se observa un decrecimiento al comparar el inicio y el tramo final del mismo periodo de tiempo.Por lo que podemos estimar que en el lapso de tiempo considerado, los ocupados de la Ciudad de Buenos Aires se han movilizado hacia el nivel de instrucción superior.
+
+### Hipótesis 2 
+En el conjunto de ocupados, durante el periodo 2012 - 2019 hubo mayor porcentaje de mujeres en los niveles superiores de instruccion que en los niveles de instrucción menores, respecto de los varones ocupados.
+
+```{r}
+  nivel_educativo_sexo_anio|>
+  filter(sexo != "TOTAL")|>
+  group_by(nivel_instruccion, sexo)|>
+    summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
+  spread(sexo,promedio_poblacion) |> rename(Mujer=m,Varon=v)  |>
+arrange(nivel_instruccion)|>
+  knitr:: kable()
+
+```
+
+```{r}
+nivel_educativo_sexo_anio|>
+  filter(sexo != "TOTAL")|>
+  group_by(nivel_instruccion, sexo)|>
+    summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
+  ggplot(aes(nivel_instruccion,promedio_poblacion))+
+  geom_line(aes(group=sexo,color=sexo), size=2,alpha = 0.5)+
+  labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+
+
+```
+
+En la gráfica se observa que sólo en el nivel "superior completo" el porcentaje de mujeres ocupadas es mayor que el de varones.
+Para el resto de los niveles de instrucción, el porcentaje de varones es el mayor, con excepción del nivel "primario incompleto" en el que muestran igual participación.
+
+```{r}
+
+nivel_educativo_sexo_anio|>
+  filter(sexo != "TOTAL")|>
+  group_by(nivel_instruccion, sexo)|>
+  summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
+  ggplot(aes(sexo, promedio_poblacion))+
+  geom_col(aes(width = 0.5, fill = nivel_instruccion))+
+  geom_text(aes(label = promedio_poblacion, group = factor(nivel_instruccion, level=c('Primario incompleto', 'Primario completo', 'Secundario incompleto', 'Secundario completo', 'Superior incompleto', 'Superior completo'))), position = position_stack(0.5))+
+  scale_fill_discrete(name = "Nivel de instrucción")+
+  labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", 
+       x = "Sexo", 
+       y="% población ocupados")
+
+```
+
+Otra forma de visualizar que las mujeres ocupadas con nivel superior completo sólo tienen mayor participación que los varones en este agrupamiento de nivel de instrucción, mientras que los varones lo tienen en los demás grupos.
+
+### Hipótesis 3 
 ¿cómo se comporta de manera comparativa el nivel educativo, según el sexo de los ocupados, durante estos años?
-¿ se ha producido movilidad ascendente en el nivel educativo de los ocupados de la Ciudad de Buenos Aires, en el periodo 2012 y 2019 ?
+
+```{r}
+nivel_educativo_sexo_anio|>
+  filter(sexo != "TOTAL")|>
+  group_by(nivel_instruccion, sexo)|>
+  summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
+  ggplot() +  
+  geom_bar(aes(x = nivel_instruccion, y = promedio_poblacion, fill = sexo),
+           stat = 'identity', position = 'dodge')+
+   labs(title = "Niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+```
+
+En la gráfica se observa, durante el periodo 2012-2019, una relación directa entre nivel de instrucción y porcentaje de ocupados de ambos sexos; esto es, a menor instrucción, menor porcentaje de ocupados, y viceversa.
+
+
+Como ya venimos observando en las hipótesis anteriores,sobresale el grupo de ocupados que presenta el nivel de "instrucción superior" y, dentro de éste, el grupo de mujeres ocupadas.
+
+```{r}
+
+  #for(periodo in 2012:2019){
+  #  p<- nivel_educativo_sexo_anio|>
+  #    select(anio, sexo, nivel_instruccion, porc_poblacion)|>
+  #    filter(sexo != "TOTAL" & anio==periodo)|>
+  #    group_by(nivel_instruccion, sexo) 
+  #  print(ggplot(p) +  
+  #  geom_bar(aes(x = nivel_instruccion, y = porc_poblacion, fill = sexo),
+  #           stat = 'identity', position = 'dodge')+
+  #  labs(title = paste0("Niveles de instrucción año:", periodo, " por sexo de los ocupados"), x="Nivel Instrucción", y="% promedio ocupados")+
+  #  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)))
+  #}
+
+nivel_educativo_sexo_anio |> 
+  filter(sexo != "TOTAL") |> 
+  ggplot(aes(nivel_instruccion, porc_poblacion, fill = sexo)) +
+  geom_col(position = 'dodge') +
+  facet_wrap(~anio)+
+  labs(title = paste0("Niveles de instrucción año por sexo de los ocupados"), x="Nivel Instrucción", y="% promedio ocupados")+
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+
+```
+
+Al desglosar en cada ano de este periodo pudimos ver que, si bien hubieron algunas leves diferencias en un año en particular, cómo por ejemplo sucedió en 2012 cuando el grupo de mujeres ocupadas con nivel "superior incompleto" fue ligeramente superior al de los varones, en todos los años el comportamiento fue similar: para todos los grupos de nivel de instrucción, los varones presentaron mayor porcentaje de ocupación, excepto en el grupo de mujeres con nivel "superior completo".
+
+### Hipotesis 4
+
+¿cómo se comporta de manera comparativa la calificación ocupacional, según el sexo de los ocupados, durante estos años?
+
+```{r}
+
+calif_ocup_sexo_annio_calif_ocup_limpio <- read_csv("datos/calif_ocup_sexo__annio__calif_ocup_limpio.csv",na = "-")
+```
+
+```{r}
+colnames(calif_ocup_sexo_annio_calif_ocup_limpio)
+```
+
+
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio <- calif_ocup_sexo_annio_calif_ocup_limpio |> 
+  mutate(calificacion_ocupacional=factor(calificacion_ocupacional, level=c('No calificado', 'Operativo', 'Técnico', 'Profesional'))) 
+
+```
+
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio|>
+    group_by(sexo,calificacion_ocupacional)|> 
+  summarise(promedio_poblacion = mean(porc_calif_ocupacional,na.rm=TRUE))|>
+  filter(!is.na(calificacion_ocupacional))|>
+  knitr:: kable()
+
+
+```
+
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio$porc_calif_ocupacional <- as.numeric(calif_ocup_sexo_annio_calif_ocup_limpio$porc_calif_ocupacional, na.rm=TRUE)
+```
+
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio|>
+    filter(calificacion_ocupacional != "No sabe/no contesta")|>
+    group_by(sexo,calificacion_ocupacional)|>
+  summarise(promedio_calificacion = round(mean(porc_calif_ocupacional,na.rm=TRUE), 2))|>
+  ggplot(aes(calificacion_ocupacional, promedio_calificacion , fill=sexo))+
+  geom_col(position = "stack")+
+  geom_text(aes(label = promedio_calificacion, group = factor(sexo)), position = position_stack(0.5))+
+    labs(title = "Promedios de nivel de calificación (2011-2019), por sexo de los ocupados", x="Calificación Ocupacional", y="% promedio ocupados")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+```
+
+Al relacionar las hipótesis 2 y 4, observamos que al comparar el porcentaje de ocupados de ambos sexos que tienen nivel de instrucción superior (incompleto y completo) con el porcentaje de ocupados en trabajos de calificación técnica y profesional juntos, el primer grupo es superior.
+
+
+Esto puede indicar que parte de estos ocupados se han insertado laboralmente en puestos que requieren menor calificación.
+Dicho de otra manera, parte de los ocupados se encuentran sobre calificados para sus trabajos.
+
+
+Focalizando el análisis en las mujeres, en esta gráfica gráfica puede observarse que en los niveles profesional y técnico juntos, las mujeres ocupadas escasamente superan a los varones.
+Al relacionarse con la hipótesis 2 que mostraba que las mujeres de nivel de instrucción "superior completo" aventajaban por 11 puntos a los varones ocupados de ese grupo, podría pensarse que, pese al nivel de instrucción superior que muestran las mujeres ocupadas, la inserción laboral en agrupamientos técnico-profesional no muestra la misma ventaja.
