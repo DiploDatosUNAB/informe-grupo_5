@@ -12,7 +12,11 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
  
 # Cargar los paquetes necesarios acá
 library(readr)
@@ -99,22 +103,14 @@ nivel_educativo_sexo_anio <- nivel_educativo_sexo_anio |> mutate(nivel_instrucci
 ```
 
 Los datos observados no tiene valores nulos, ni negativos, la cantidad de decimales de la columna de "porc_poblacion" difieren según los años: en el 2012 cuenta con 16 decimales y en el resto de los periodos tan solo cuenta con un decimal.
-Se normalizó, para su mejor lectura, a 2 decimales creando la columna "porcentaje_poblacion"
-
-```{r}
-
-nivel_educativo_sexo_anio<-nivel_educativo_sexo_anio |> 
-  mutate(porcentaje_poblacion = round(porc_poblacion,2))
-
-```
 
 ### Valor medio y desvío estándar, por sexo y nivel de instrucción
 
 ```{r}
 nivel_educativo_sexo_anio |> 
-  filter(sexo=='m' |sexo=='v') |>
+  filter(sexo!='TOTAL') |>
   group_by(sexo, nivel_instruccion) |> 
-  summarise(porcentaje_poblacion_media = mean(porcentaje_poblacion),porcentaje_poblacion_sd = sd(porcentaje_poblacion))|>
+  summarise(porcentaje_poblacion_media = mean(porc_poblacion),porcentaje_poblacion_sd = sd(porc_poblacion))|>
   knitr::kable()
 
 ```
@@ -132,9 +128,9 @@ Llama la atención el valor de la desviación estándar para el nivel "superior 
 ```{r}
 
 nivel_educativo_sexo_anio |> 
-  filter(sexo=='m' |sexo=='v') |>
+  filter(sexo!='TOTAL') |>
   group_by(sexo, nivel_instruccion) |> 
-  summarise(porcentaje_poblacion_max = max(porcentaje_poblacion,na.rm=TRUE),porcentaje_poblacion_min = min(porcentaje_poblacion,na.rm=TRUE), rango=max(porcentaje_poblacion,na.rm=TRUE)-min(porcentaje_poblacion,na.rm=TRUE))|>
+  summarise(porcentaje_poblacion_max = max(porc_poblacion,na.rm=TRUE),porcentaje_poblacion_min = min(porc_poblacion,na.rm=TRUE), rango=max(porc_poblacion,na.rm=TRUE)-min(porc_poblacion,na.rm=TRUE))|>
   knitr:: kable()
             
 
@@ -184,11 +180,11 @@ nivel_educativo_sexo_anio|>
   filter(sexo != "TOTAL")|>
   group_by(nivel_instruccion, sexo)|>
     summarise(promedio_poblacion = round(mean(porc_poblacion),2))|>
-  ggplot(aes(nivel_instruccion , promedio_poblacion , fill=sexo))+
-  geom_col(position = "stack")+
-  geom_text(aes(label = promedio_poblacion, group = factor(sexo)), position = position_stack(0.5))+
-    labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
+  ggplot(aes(nivel_instruccion,promedio_poblacion))+
+  geom_line(aes(group=sexo,color=sexo), size=2,alpha = 0.5)+
+  labs(title = "Promedios de niveles de instrucción (2012-2019), por sexo de los ocupados", x="Nivel Instrucción", y="% promedio ocupados")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
 
 
 ```
@@ -237,17 +233,26 @@ Como ya venimos observando en las hipótesis anteriores,sobresale el grupo de oc
 
 ```{r}
 
-  for(periodo in 2012:2019){
-    p<- nivel_educativo_sexo_anio|>
-      select(anio, sexo, nivel_instruccion, porcentaje_poblacion)|>
-      filter(sexo != "TOTAL" & anio==periodo)|>
-      group_by(nivel_instruccion, sexo) 
-    print(ggplot(p) +  
-    geom_bar(aes(x = nivel_instruccion, y = porcentaje_poblacion, fill = sexo),
-             stat = 'identity', position = 'dodge')+
-    labs(title = paste0("Niveles de instrucción año:", periodo, " por sexo de los ocupados"), x="Nivel Instrucción", y="% promedio ocupados")+
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)))
-  }
+  #for(periodo in 2012:2019){
+  #  p<- nivel_educativo_sexo_anio|>
+  #    select(anio, sexo, nivel_instruccion, porc_poblacion)|>
+  #    filter(sexo != "TOTAL" & anio==periodo)|>
+  #    group_by(nivel_instruccion, sexo) 
+  #  print(ggplot(p) +  
+  #  geom_bar(aes(x = nivel_instruccion, y = porc_poblacion, fill = sexo),
+  #           stat = 'identity', position = 'dodge')+
+  #  labs(title = paste0("Niveles de instrucción año:", periodo, " por sexo de los ocupados"), x="Nivel Instrucción", y="% promedio ocupados")+
+  #  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)))
+  #}
+
+nivel_educativo_sexo_anio |> 
+  filter(sexo != "TOTAL") |> 
+  ggplot(aes(nivel_instruccion, porc_poblacion, fill = sexo)) +
+  geom_col(position = 'dodge') +
+  facet_wrap(~anio)+
+  labs(title = paste0("Niveles de instrucción año por sexo de los ocupados"), x="Nivel Instrucción", y="% promedio ocupados")+
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
 
 ```
 
@@ -259,17 +264,28 @@ Al desglosar en cada ano de este periodo pudimos ver que, si bien hubieron algun
 
 ```{r}
 
-calif_ocup_sexo_annio_calif_ocup_limpio <- read_csv("datos/calif_ocup_sexo__annio__calif_ocup_limpio.csv")
+calif_ocup_sexo_annio_calif_ocup_limpio <- read_csv("datos/calif_ocup_sexo__annio__calif_ocup_limpio.csv",na = "-")
 ```
 
 ```{r}
 colnames(calif_ocup_sexo_annio_calif_ocup_limpio)
 ```
 
+
+```{r}
+calif_ocup_sexo_annio_calif_ocup_limpio <- calif_ocup_sexo_annio_calif_ocup_limpio |> 
+  mutate(calificacion_ocupacional=factor(calificacion_ocupacional, level=c('No calificado', 'Operativo', 'Técnico', 'Profesional'))) 
+
+```
+
 ```{r}
 calif_ocup_sexo_annio_calif_ocup_limpio|>
-    group_by(sexo,calificacion_ocupacional)|>
-  summarise(promedio_poblacion = mean(porc_calif_ocupacional,na.rm=TRUE),na.rm=TRUE)
+    group_by(sexo,calificacion_ocupacional)|> 
+  summarise(promedio_poblacion = mean(porc_calif_ocupacional,na.rm=TRUE))|>
+  filter(!is.na(calificacion_ocupacional))|>
+  knitr:: kable()
+
+
 ```
 
 ```{r}
@@ -280,8 +296,8 @@ calif_ocup_sexo_annio_calif_ocup_limpio$porc_calif_ocupacional <- as.numeric(cal
 calif_ocup_sexo_annio_calif_ocup_limpio|>
     filter(calificacion_ocupacional != "No sabe/no contesta")|>
     group_by(sexo,calificacion_ocupacional)|>
-  summarise(promedio_calificacion = round(mean(porc_calif_ocupacional,na.rm=TRUE), 2), na.rm=TRUE)|>
-  ggplot(aes(factor(calificacion_ocupacional, level=c('No calificado', 'Operativo', 'Técnico', 'Profesional')) , promedio_calificacion , fill=sexo))+
+  summarise(promedio_calificacion = round(mean(porc_calif_ocupacional,na.rm=TRUE), 2))|>
+  ggplot(aes(calificacion_ocupacional, promedio_calificacion , fill=sexo))+
   geom_col(position = "stack")+
   geom_text(aes(label = promedio_calificacion, group = factor(sexo)), position = position_stack(0.5))+
     labs(title = "Promedios de nivel de calificación (2011-2019), por sexo de los ocupados", x="Calificación Ocupacional", y="% promedio ocupados")+
